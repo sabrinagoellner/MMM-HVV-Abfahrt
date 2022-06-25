@@ -1,14 +1,10 @@
 const NodeHelper = require("node_helper");
 const request = require("request-promise");
 const cheerio = require("cheerio");
+const puppeteer = require("puppeteer");
 
 // add require of other javascripot components here
 // var xxx = require('yyy') here
-
-
-// iframeUrl.js
-const puppeteer = require("puppeteer");
-
 
 
 module.exports = NodeHelper.create({
@@ -29,6 +25,8 @@ module.exports = NodeHelper.create({
     
 
     scrapeURL: async function (url) {
+        console.log('scrapeURL: ' +this.name);
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         // Goto page
@@ -65,6 +63,8 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived: function(notification, payload) {
         
+        console.log('socketNotificationReceived: ' +this.name);
+
 
         if (notification === 'SCRAPE_URL') {
         

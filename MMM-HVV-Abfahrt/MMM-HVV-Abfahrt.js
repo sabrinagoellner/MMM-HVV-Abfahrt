@@ -131,7 +131,8 @@ Module.register("MMM-HVV-Abfahrt", {
 
     socketNotificationReceived: function(notification, payload) { 
         if (notification === "SCRAPE_RESULT") {
-    
+			Log.log("payload" + payload);
+
 			this.DEPARTURES = payload;
             this.updateDom(1000);
             
@@ -154,13 +155,20 @@ Module.register("MMM-HVV-Abfahrt", {
 
 	// this is the major worker of the module, it provides the displayable content for this module
 	getDom: function() {
+		
+		Log.log("create DOM");
+
 		var wrapper = document.createElement("div");
 
 		if(!this.DEPARTURES.length > 0){
+
+			Log.log("Departures: " + this.DEPARTURES.length);
 			
 			wrapper.innerHTML = this.config.message;
 
 		} else {
+
+
 
 			var depts = this.DEPARTURES
 			
