@@ -27,7 +27,13 @@ module.exports = NodeHelper.create({
     scrapeURL: async function (url) {
         console.log('scrapeURL: ' +this.name);
 
-        const browser = await puppeteer.launch();
+        //const browser = await puppeteer.launch();
+        
+        const browser = await puppeteer.launch({
+            headless: true,
+            executablePath: '/usr/bin/chromium-browser',
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         const page = await browser.newPage();
         // Goto page
         await page.goto(url);
