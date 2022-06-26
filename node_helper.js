@@ -37,7 +37,7 @@ module.exports = NodeHelper.create({
             //args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
-        //const version = await page.browser().version();
+        const version = await page.browser().version();
         console.log('using chromium version: ' +version);
 
         // Goto page
