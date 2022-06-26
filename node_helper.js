@@ -1,7 +1,8 @@
 const NodeHelper = require("node_helper");
 const request = require("request-promise");
 const cheerio = require("cheerio");
-const puppeteer = require("puppeteer");
+//const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer-core');
 
 // add require of other javascripot components here
 // var xxx = require('yyy') here
@@ -31,9 +32,9 @@ module.exports = NodeHelper.create({
         
         const browser = await puppeteer.launch({
             headless: true,
-            executablePath: '/usr/bin/chromium-browser',
-            product: "chrome",
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            executablePath: '/usr/bin/chromium-browser'
+            //product: "chrome",
+            //args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
         // Goto page
