@@ -1,8 +1,8 @@
 const NodeHelper = require("node_helper");
 const request = require("request-promise");
 const cheerio = require("cheerio");
-//const puppeteer = require("puppeteer");
-const puppeteer = require('puppeteer-core');
+const puppeteer = require("puppeteer");
+//const puppeteer = require('puppeteer-core');
 
 // add require of other javascripot components here
 // var xxx = require('yyy') here
