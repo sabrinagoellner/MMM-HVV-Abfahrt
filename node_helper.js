@@ -29,7 +29,7 @@ module.exports = NodeHelper.create({
     
 
     scrapeURL: async function (url) {
-        const browser = await playwright.chromium.launch({
+        const browser = await playwright.firefox.launch({
             headless: true // setting this to true will not run the UI
         });
 
