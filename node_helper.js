@@ -1,12 +1,15 @@
 const NodeHelper = require("node_helper");
 const request = require("request-promise");
 const cheerio = require("cheerio");
-const puppeteer = require("puppeteer");
-//const puppeteer = require('puppeteer-core');
 
 // add require of other javascripot components here
 // var xxx = require('yyy') here
 
+
+// iframeUrl.js
+//const puppeteer = require("puppeteer");
+
+const playwright = require('playwright');
 
 module.exports = NodeHelper.create({
 
@@ -26,20 +29,11 @@ module.exports = NodeHelper.create({
     
 
     scrapeURL: async function (url) {
-        console.log('scrapeURL: ' +this.name);
-
-        //const browser = await puppeteer.launch();
-        
-        const browser = await puppeteer.launch({
-            headless: true,
-            executablePath: 'chromium-browser'
-            //product: "chrome",
-            //args: ['--no-sandbox', '--disable-setuid-sandbox']
+        const browser = await playwright.chromium.launch({
+            headless: true // setting this to true will not run the UI
         });
-        const page = await browser.newPage();
-        const version = await page.browser().version();
-        console.log('using chromium version: ' +version);
 
+        const page = await browser.newPage();
         // Goto page
         await page.goto(url);
         // Scroll down
@@ -74,8 +68,6 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived: function(notification, payload) {
         
-        console.log('socketNotificationReceived: ' +this.name);
-
 
         if (notification === 'SCRAPE_URL') {
         
