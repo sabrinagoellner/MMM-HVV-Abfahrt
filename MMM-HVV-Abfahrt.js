@@ -1,12 +1,7 @@
 /*
-
-sample module structure
-
-
+by Sabrina Göllner
+@nayemi
  */
-
-
-
 
 Module.register("MMM-HVV-Abfahrt", {
 	// define variables used by module, but not in config data
@@ -21,9 +16,9 @@ Module.register("MMM-HVV-Abfahrt", {
 	defaults: {
         header: "Abfahrten",
 		message: "lade Abfahrten",
-        updateInterval: 60 * 60 * 1000,
-        animationSpeed: 3000,
-		maxDepartures: 5
+        updateInterval: 2000,
+        animationSpeed: 5000,
+		maxDepartures: 10
 	},
 
 	init: function(){
@@ -131,9 +126,10 @@ Module.register("MMM-HVV-Abfahrt", {
 
     socketNotificationReceived: function(notification, payload) { 
         if (notification === "SCRAPE_RESULT") {
-			Log.log("payload" + payload);
+			
+			//console.log("PAYLOAD received"+ payload);
 
-			this.DEPARTURES = payload;
+			this.DEPARTURES = JSON.parse(payload);
             this.updateDom(1000);
             
         }
@@ -156,22 +152,21 @@ Module.register("MMM-HVV-Abfahrt", {
 	// this is the major worker of the module, it provides the displayable content for this module
 	getDom: function() {
 		
-		Log.log("create DOM");
-
+		
+		
 		var wrapper = document.createElement("div");
+		wrapper.id ="HVV";
 
-		if(!this.DEPARTURES.length > 0){
-
-			Log.log("Departures: " + this.DEPARTURES.length);
+		  if(!this.DEPARTURES.departures.length > 0){
 			
 			wrapper.innerHTML = this.config.message;
 
 		} else {
 
 
+			var depts = this.DEPARTURES;
+			console.log("DEPTS" + depts);
 
-			var depts = this.DEPARTURES
-			
 			var table = document.createElement("table")
 			table.className = "hvv-table"
 			
@@ -186,7 +181,7 @@ Module.register("MMM-HVV-Abfahrt", {
 			th.appendChild(th_td2)
 			
 			var th_td3 = document.createElement("th")
-			th_td3.innerHTML = "Zeit"
+			th_td3.innerHTML = "Abfahrt"
 			th.appendChild(th_td3)
 			
 			table.appendChild(th);		
@@ -195,31 +190,38 @@ Module.register("MMM-HVV-Abfahrt", {
 				
 				// new row
 				var tableRow = document.createElement("tr");
-				const element = depts[index];
+				const element = depts.departures[index];
 				
-				// add dable data:
-				var line_result_td = document.createElement("td");
-				line_result_td.className = "line"
-				line_result_td.innerHTML = element.line_result_td;	
-				tableRow.appendChild(line_result_td);
-				
-				var direction_result_td = document.createElement("td");	
-				direction_result_td.className = "direction"
-				direction_result_td.innerHTML = element.direction_result_td;	
-				tableRow.appendChild(direction_result_td);
-				
-				var departure_time_td = document.createElement("td");	
-				departure_time_td.className = "time"
-				departure_time_td.innerHTML = element.departure_time_td;	
-				tableRow.appendChild(departure_time_td);
-				
-				// append the table tow
-				table.appendChild(tableRow)
-			}
+				// fahrtrichtung
+				if (element.directionId == 6) {
+					
+					var icon = this.config.showIcons ? `<td class="icon"><img class="grayscale" src="https://cloud.geofox.de/icon/linename?name=${element.line.name}&height=20&outlined=true&fileFormat=SVG"/></td>` : ''
+					// add dable data:
+					var line_result_td = document.createElement("td");
+					line_result_td.className = "line"
+					line_result_td.innerHTML = icon; // + element.line.name;	
+					tableRow.appendChild(line_result_td);
+					
+					var direction_result_td = document.createElement("td");	
+					direction_result_td.className = "direction"
+					direction_result_td.innerHTML = element.line.direction;	
+					tableRow.appendChild(direction_result_td);
+					
+					var departure_time_td = document.createElement("td");	
+					departure_time_td.className = "time"
+					var time_Off = element.timeOffset == 0 ? "gerade eben" : "in "+ element.timeOffset + " min (+" + element.delay / 60 + ")";
+					departure_time_td.innerHTML = time_Off ;	
+					tableRow.appendChild(departure_time_td);
+					
+					// append the table tow
+					table.appendChild(tableRow)
+				}
+			} 
 			
 			
 			wrapper.appendChild(table);
-		}
+		} 
+		
 			
 		// pass the created content back to MM to add to DOM.
 		return wrapper;
