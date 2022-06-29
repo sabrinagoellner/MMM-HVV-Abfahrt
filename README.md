@@ -6,10 +6,10 @@ My First module for the Magic Mirror displaying HVV Transport Departures.
 - put hte access data into .env variables
 
 ### dependencies to install from npm 
-- request-promise
-- crypto
+- request-promise ( for requests)
+- crypto ( for encrypting the request and your authentification)
 - dotenv (for the environment variables of sensitive login data)
-
+put the .env file in the root directory of the node.js project and put variables like USER_NAME = <your-user-name-from-geofox-api> and PASSWORD =  <your-password-from-geofox-api>
 
 ### config.js example
 ```
@@ -26,8 +26,9 @@ My First module for the Magic Mirror displaying HVV Transport Departures.
         direction: 6, // which direction the train or bus is taking , 6 is backwards and 1 for forwwards (see geofox documentation)
         timePeriod: 30, // time period for the departures requested
         showIcons: true, // show hvv icons or text 
+        stationName: "Rauhes Haus", // station Name for displaying
     }
 },
 ```
 ###
-Notice: this module is cuerrently in development
+Notice: this module is currently still in development, its not ready-to-use yet!
