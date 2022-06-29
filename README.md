@@ -9,7 +9,8 @@ My First module for the Magic Mirror displaying HVV Transport Departures.
 - request-promise ( for requests)
 - crypto ( for encrypting the request and your authentification)
 - dotenv (for the environment variables of sensitive login data)
-put the .env file in the root directory of the node.js project and put variables like USER_NAME = <your-user-name-from-geofox-api> and PASSWORD =  <your-password-from-geofox-api>
+put the .env file in the root directory of the node.js project 
+and put variables like USER_NAME = "your-user-name-from-geofox-api" and PASSWORD =  "your-password-from-geofox-api"
 
 ### config.js example
 ```
