@@ -1,5 +1,7 @@
 # MMM-HVV-Abfahrt
-My First module for the Magic Mirror displaying HVV Transport Departures.
+This Project is my First module for the Magic Mirror 
+
+It is displaying HVV-Transport Departures.
 
 - it is using the Geofox API for getting the departures of a given time period.
 - To access it you need access data (see: [https://www.hvv.de/de/fahrplaene/abruf-fahrplaninfos/datenabruf])
