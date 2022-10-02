@@ -15,10 +15,17 @@ Module.register("MMM-HVV-Abfahrt", {
 	// and replaced if the same thing is provided in config
 	defaults: {
         header: "Abfahrten",
-		message: "lade Abfahrten",
-        updateInterval: 2000,
-        animationSpeed: 5000,
-		maxDepartures: 10
+		message: "lade Abfahrten...", // loading message
+		initialLoadDelay: 2000, // load delay on start
+		animationSpeed: 5000, // how fast the animation should be displayed
+		updateInterval: 10000, // x milliseconds when new data is fetched
+		maxDepartures: 10, // how much departures should be loaded
+		direction: 6, // which direction the train or bus is taking , 6 is backwards and 1 for forwwards (see geofox documentation)
+		timePeriod: 30, // time period for the departures requested
+		showIcons: true, // show hvv icons or text 
+		stationName: "Rauhes Haus", // station Name for displaying
+		useRealtime: true,
+		//url: "https://gti.geofox.de/gti/public/departureList"
 	},
 
 	init: function(){
@@ -28,8 +35,17 @@ Module.register("MMM-HVV-Abfahrt", {
 	start: function(){
 		Log.log(this.name + " is starting!");
 		this.DEPARTURES = [];
-        this.url = this.config.url;
+        this.url = this.url;
+		this.direction = this.config.direction ? this.config.direction : this.direction;
+		this.timePeriod = this.config.timePeriod ? this.config.timePeriod : this.timePeriod;
+		this.maxDepartures = this.config.maxDepartures ? this.config.maxDepartures : this.maxDepartures;
+		this.stationName = this.config.stationName ? this.config.stationName : this.stationName;
+
+		//console.log("maxdepartures before SEND"+ this.maxDepartures);
+		//console.log("timePeriod before SEND"+ this.timePeriod);
+		
         this.scheduleUpdate();   
+
     },
 
 	loaded: function(callback) {
@@ -78,60 +94,37 @@ Module.register("MMM-HVV-Abfahrt", {
 		return this.config.header;
 	},
 
-	// messages received from other modules and the system (NOT from your node helper)
-	// payload is a notification dependent data structure
-	/* notificationReceived: function(notification, payload, sender) {
-		// once everybody is loaded up
-		if(notification==="ALL_MODULES_STARTED"){
-			// send our config to our node_helper
-			this.sendSocketNotification("CONFIG",this.config)
-		}
-		if (sender) {
-			Log.log(this.name + " received a module notification: " + notification + " from sender: " + sender.name);
-		} else {
-			Log.log(this.name + " received a system notification: " + notification);
-		}
-	}, */
 
     // this tells module when to update
     scheduleUpdate: function() { 
         
         setInterval(() => {
-            this.scrapeURL();
+            this.getDepartures();
         }, this.config.updateInterval);
-        this.scrapeURL(this.config.initialLoadDelay);
+        this.getDepartures(this.config.initialLoadDelay);
         var self = this;
     },
 
     // this asks node_helper for data
-    scrapeURL: function() {         
-        this.sendSocketNotification('SCRAPE_URL', this.url);
+    getDepartures: function() {         
+		//var url = String(this.url);
+		
+		var timePeriod = this.timePeriod;
+		var maxDepartures = this.maxDepartures;
+		var stationName = this.stationName;
+		
+		console.log("stationName is: "+ stationName);
+		payload = [timePeriod, maxDepartures, stationName]
+
+        this.sendSocketNotification('GET_DEPARTURES',payload);
     },
-
-	// messages received from from your node helper (NOT other modules or the system)
-	// payload is a notification dependent data structure, up to you to design between module and node_helper
-	
-    /* socketNotificationReceived: function(notification, payload) {
-		Log.log(this.name + " received a socket notification: " + notification + " - Payload: " + payload);
-		if(notification === "message_from_helper"){
-			this.config.message = payload;
-			// tell mirror runtime that our data has changed,
-			// we will be called back at GetDom() to provide the updated content
-			this.updateDom(1000)
-		}
-
-	}, */
-
 
 
     socketNotificationReceived: function(notification, payload) { 
-        if (notification === "SCRAPE_RESULT") {
-			
-			//console.log("PAYLOAD received"+ payload);
-
+        if (notification === "GET_RESULT") {
+			// getting the payload back and parse it to get JSON
 			this.DEPARTURES = JSON.parse(payload);
             this.updateDom(1000);
-            
         }
         
     },
@@ -151,27 +144,26 @@ Module.register("MMM-HVV-Abfahrt", {
 
 	// this is the major worker of the module, it provides the displayable content for this module
 	getDom: function() {
-		
-		
-		
+
+		console.log("depts" +this.DEPARTURES.departures);
+			
 		var wrapper = document.createElement("div");
 		wrapper.id ="HVV";
-
-		  if(!this.DEPARTURES.departures.length > 0){
+		
+		if(!this.DEPARTURES.departures){
+			console.log(this.name + ":no data from Server!")
 			
+			// if no data is there, show the loading message
 			wrapper.innerHTML = this.config.message;
-
 		} else {
 
-
 			var depts = this.DEPARTURES;
-			console.log("DEPTS" + depts);
-
+		
 			var table = document.createElement("table")
 			table.className = "hvv-table"
 			
+			// Table header:
 			var th = document.createElement("tr")
-			
 			var th_td = document.createElement("th")
 			th_td.innerHTML = "Linie"
 			th.appendChild(th_td)
@@ -188,12 +180,12 @@ Module.register("MMM-HVV-Abfahrt", {
 			
 			for (let index = 0; index < this.config.maxDepartures ; index++) {
 				
-				// new row
+				// make new table  row
 				var tableRow = document.createElement("tr");
 				const element = depts.departures[index];
 				
-				// fahrtrichtung
-				if (element.directionId == 6) {
+				// show only this direction:
+				if (element.directionId == this.config.direction) {
 					
 					var icon = this.config.showIcons ? `<td class="icon"><img class="grayscale" src="https://cloud.geofox.de/icon/linename?name=${element.line.name}&height=20&outlined=true&fileFormat=SVG"/></td>` : ''
 					// add dable data:
@@ -218,11 +210,10 @@ Module.register("MMM-HVV-Abfahrt", {
 				}
 			} 
 			
-			
+			// add table
 			wrapper.appendChild(table);
 		} 
-		
-			
+					
 		// pass the created content back to MM to add to DOM.
 		return wrapper;
 	},

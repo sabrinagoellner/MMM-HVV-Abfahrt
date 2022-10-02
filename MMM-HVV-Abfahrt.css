@@ -1,0 +1,10 @@
+#HVV > table > tr > td.line > img {
+    max-width: 100%;
+    max-height: 100%;
+    padding-right: 1em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+
