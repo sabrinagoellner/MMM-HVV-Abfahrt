@@ -1,5 +1,5 @@
 # MMM-HVV-Abfahrt
-This Project is my First module for the Magic Mirror 
+This Project is my very first module for the Magic Mirror 2.
 
 It is displaying HVV-Transport Departures.
 
@@ -7,12 +7,19 @@ It is displaying HVV-Transport Departures.
 - To access it you need access data (see: [https://www.hvv.de/de/fahrplaene/abruf-fahrplaninfos/datenabruf])
 - put hte access data into .env variables
 
-### dependencies to install from npm 
-- request-promise ( for requests)
-- crypto ( for encrypting the request and your authentification)
-- dotenv (for the environment variables of sensitive login data)
-put the .env file in the root directory of the node.js project 
-and put variables like USER_NAME = "your-user-name-from-geofox-api" and PASSWORD =  "your-password-from-geofox-api"
+
+
+### Installation
+
+```
+cd ~/MagicMirror/modules
+git clone https://github.com/nayemi/MMM-HVV-Abfahrt
+cd MMM-HVV-Abfahrt
+npm install
+```
+### Notice: dotenv (for the environment variables of sensitive login data)
+Create an `.env` file in the root directory of the node.js (electron) project of Magic Mirror 2 
+and put the variables `USER_NAME = "your-user-name-from-geofox-api"` and `PASSWORD =  "your-password-from-geofox-api"`. The module will look for them and use them in the encryption process of the request. Otherwise it will not work.
 
 ### config.js example
 ```
@@ -21,17 +28,15 @@ and put variables like USER_NAME = "your-user-name-from-geofox-api" and PASSWORD
     position: "bottom_left",
     config: {
         header: "Abfahrten",
-        message: "lade Abfahrten...", // loading message
+        message: "lade Abfahrten...", // loading message if no departures
         initialLoadDelay: 2000, // load delay on start
-        animationSpeed: 5000, // how fast the animation should be displayed
-        updateInterval: 10000, // x milliseconds when new data is fetched
-        maxDepartures: 10, // how much departures should be loaded
-        direction: 6, // which direction the train or bus is taking , 6 is backwards and 1 for forwwards (see geofox documentation)
-        timePeriod: 30, // time period for the departures requested
-        showIcons: true, // show hvv icons or text 
-        stationName: "Rauhes Haus", // station Name for displaying
+        updateInterval: 10000, // time in milliseconds when new data should be fetched
+        maxDepartures: 10, // how much departures should be displayed
+        timePeriod: 30, // time period (e.g departures in the period of 30 minutes from now) 
+        showIcons: true, // show hvv icons or only text 
+        stationName: "Rauhes Haus", // your station name for displaying
     }
 },
 ```
-###
-Notice: this module is currently still in development, its not ready-to-use yet!
+
+Notice: this module is still in development, use it at your own risk ;)

@@ -72,8 +72,6 @@ module.exports = NodeHelper.create({
             if (xhr_name.readyState === 4) {            
                 
                 response_name = xhr_name.responseText;
-                
-                console.log("response_name " + response_name);
                 return response_name;
             } 
             
